@@ -1,0 +1,7 @@
+Breakpoint 1 at 0x178: file source/main.c, line 52.
+Note: automatically using hardware breakpoints for read-only addresses.
+======================================================
+Running all tests..."
+
+"Initial State"..."Switch 1 ON"..."Switch 2 ON"...======================================================
+Quitting: Remote doesn't know how to detach
