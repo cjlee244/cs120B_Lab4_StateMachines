@@ -37,14 +37,20 @@ test "Switch 1 ON"
 setPINA 0x00
 setPINB 0x01
 continue 2
-expectPORTB 0x01
+setPINA 0x01
+setPINB 0x00
+continue 2
+expectPORTB 0x02
 checkResult
 
 test "Switch 2 ON"
 setPINA 0x01
 setPINB 0x00
 continue 2
-expectPORTB 0x02
+setPINA 0x00
+setPINB 0x01
+continue 2
+expectPORTB 0x01
 checkResult
 
 # Report on how many tests passed/tests ran
