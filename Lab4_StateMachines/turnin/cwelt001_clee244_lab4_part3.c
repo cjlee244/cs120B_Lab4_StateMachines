@@ -12,51 +12,72 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Wait, Enter, Unlock, Lock} state;
-	
+enum States {Start, Wait, Unlock, Reset} state;
+
+
 void TickSM() {
-	switch(state) {
+	switch(state) { //transitions
 		case Start:
 			state = Wait;
+			PORTB = 0x00;
 			break;
 		case Wait:
-			state = ((PINA & 0x04) == 4) ? Enter:Wait; 
-			break;
-		case Enter:
-			state = ((PINA & 0x02) == 2) ? Unlock:Wait;
+			if((PINA & 0x0F) == 0x04) {
+				state = Unlock;
+			}
+			else {
+				state = Wait;
+				if ((PINA & 0xF0) == 0x80) {
+					PORTB = 0x00;
+				}
+			}
 			break;
 		case Unlock:
-			state = Lock;
+			if((PINA & 0x0F) == 0x00) {
+				state = Reset;
+			} 
+			else if((PINA & 0x0F) == 0x04) {
+				state = Unlock;
+			} 
+			else {
+				state = Wait;
+				if ((PINA & 0xF0) == 0x80) {
+					PORTB = 0x00;
+				}
+
+			}
 			break;
-		case Lock:
-			state = ((PINA & 0x80) == 0x80) ? Wait:Lock;
+		case Reset:
+			if((PINA & 0x0F) == 0x02) {
+				state = Wait;
+ 				PORTB = 0x01;
+			} 
+			else if((PINA & 0x0F) == 0x00) {
+				state = Reset;	
+			} 
+			else {
+				state = Wait;
+				if ((PINA & 0xF0) == 0x80) {
+					PORTB = 0x00;
+				}
+			}
 			break;
 		default:
-			state = Start;
-			break;
-	}
-	
-	switch(state) {
-		case Start:
-			PORTC = 0x00;
-			break;
-		case Wait:
+			state = Wait;
 			PORTB = 0x00;
-			PORTC = 0x01;
 			break;
-		case Enter:
-			PORTC = 0x02;
-			break;
+		break;
+	}
+	switch(state) { //actions (empty)
+		case Start:
+		case Wait:
 		case Unlock:
-			PORTB = 0x01;
-			PORTC = 0x03;
-			break;
-		case Lock:
-			PORTC = 0x04;
+		case Reset:
 		default:
 			break;
 	}
 }
+
 
 int main(void) {
     /* Insert DDR and PORT initializations */

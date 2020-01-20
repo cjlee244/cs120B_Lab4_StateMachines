@@ -26,23 +26,57 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test "X#"
+test "1: PINA: 0,X,#,X => PORTB: 0,0,0,0"
+setPINA 0x00
+set state = Start
+continue 2
+expectPORTB 0x00
+
 setPINA 0x01
-continue 5
+continue 2
+expectPORTB 0x00
+
 setPINA 0x04
-continue 5
-expectPORTC 0x02
+continue 2
+expectPORTB 0x00
+
+setPINA 0x01
+continue 2
+expectPORTB 0x00
 checkResult
 
-test "#Y"
+test "2: PINA: 0,#,0,Y => PORTB: 0,1"
+setPINA 0x00
+set state = Start
+continue 2
+expectPORTB 0x00
+
 setPINA 0x04
-continue 5
-printPORTC
+continue 2
+setPINA 0x00
+continue 2
 setPINA 0x02
-continue 5
+continue 2
 expectPORTB 0x01
-expectPORTC 0x03
 checkResult
+
+test "3: PINA: 0,Y,#,0,Y => PORTB: 0,0,1"
+setPINA 0x00
+set state = Start
+continue 2
+expectPORTB 0x00
+
+setPINA 0x02
+continue 2
+expectPORTB 0x00
+
+setPINA 0x04
+continue 2
+setPINA 0x00
+continue 2
+setPINA 0x02
+continue 2
+expectPORTB 0x01
 
 
 # Report on how many tests passed/tests ran
