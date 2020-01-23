@@ -26,22 +26,131 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test "X#"
+test "Initial State"
+setPINA 0x00
+continue 2
+expectPORTC 0x07
+checkResult
+
+test "7 + 1"
 setPINA 0x01
-continue 5
-setPINA 0x04
-continue 5
+continue 2
+expectPORTC 0x08
+checkResult
+
+test "8 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x09
+checkResult
+
+test "9 + 1 (Over Max)"
+setPINA 0x01
+continue 2
+expectPORTC 0x09
+checkResult
+
+test "9 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x08
+checkResult
+
+test "8 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x07
+checkResult
+
+test "7 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x06
+checkResult
+
+test "6 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x05
+checkResult
+
+test "5 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x04
+checkResult
+
+test "4 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x03
+checkResult
+
+test "3 - 1"
+setPINA 0x02
+continue 2
 expectPORTC 0x02
 checkResult
 
-test "#Y"
-setPINA 0x04
-continue 5
-printPORTC
+test "2 - 1"
 setPINA 0x02
-continue 5
-expectPORTB 0x01
+continue 2
+expectPORTC 0x01
+checkResult
+
+test "1 - 1"
+setPINA 0x02
+continue 2
+expectPORTC 0x00
+checkResult
+
+test "0 - 1 (Under Max)"
+setPINA 0x02
+continue 2
+expectPORTC 0x00
+checkResult
+
+test "0 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x01
+checkResult
+
+test "1 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x02
+checkResult
+
+test "2 + 1"
+setPINA 0x01
+continue 2
 expectPORTC 0x03
+checkResult
+
+test "3 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x04
+checkResult
+
+test "4 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x05
+checkResult
+
+test "5 + 1"
+setPINA 0x01
+continue 2
+expectPORTC 0x06
+checkResult
+
+# both pressed simultaneously
+test "Reset 0"
+setPINA 0x03
+continue 2
+expectPORTC 0x00
 checkResult
 
 

@@ -1,7 +1,7 @@
 /*	Author: clee244
  *  Partner(s) Name: Carson Welty
  *	Lab Section: 24
- *	Assignment: Lab #4  Exercise #3
+ *	Assignment: Lab #4  Exercise #2
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,47 +12,60 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Wait, Enter, Unlock, Lock} state;
-	
+enum States {Start, Init, Wait, Inc, Dec, Reset} state;
+
 void TickSM() {
 	switch(state) {
 		case Start:
+			state = Init;
+			break;
+		case Init:
 			state = Wait;
 			break;
 		case Wait:
-			state = ((PINA & 0x04) == 4) ? Enter:Wait; 
+			if((PINA == 0x01) && (PORTC < 0x09)) {
+				state = Inc;
+			}
+			else if((PINA == 0x02) && (PORTC > 0x00)) {
+				state = Dec;
+			}
+			else if(PINA == 0x03) {
+				state = Reset;
+			}
+			else {
+				state = Wait;
+			} 
 			break;
-		case Enter:
-			state = ((PINA & 0x02) == 2) ? Unlock:Wait;
+		case Inc:
+			state = Wait;
 			break;
-		case Unlock:
-			state = Lock;
+		case Dec:
+			state = Wait;
 			break;
-		case Lock:
-			state = ((PINA & 0x80) == 0x80) ? Wait:Lock;
+		case Reset:
+			state = Wait;
 			break;
 		default:
 			state = Start;
 			break;
 	}
-	
 	switch(state) {
 		case Start:
-			PORTC = 0x00;
+			break;
+		case Init: 
+			PORTC = 0x07;
 			break;
 		case Wait:
-			PORTB = 0x00;
-			PORTC = 0x01;
 			break;
-		case Enter:
-			PORTC = 0x02;
+		case Inc:
+			PORTC = PORTC + 1;
 			break;
-		case Unlock:
-			PORTB = 0x01;
-			PORTC = 0x03;
+		case Dec:
+			PORTC = PORTC - 1;
 			break;
-		case Lock:
-			PORTC = 0x04;
+		case Reset:
+			PORTC = 0x00;
+			break;
 		default:
 			break;
 	}
@@ -61,9 +74,9 @@ void TickSM() {
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
 	DDRC = 0xFF; PORTC = 0x00;
     /* Insert your solution below */    
+	state = Start;
 	while (1) {
 		TickSM();
     }
